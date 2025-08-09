@@ -1,0 +1,79 @@
+﻿@model Employee
+
+@{
+    var fields = ViewBag.Fields as List<EmployeeField>;
+}
+
+
+<div class="container mt-4">
+    <h2 class="mb-4">Add New Employee</h2>
+
+    <form asp-action="Create" method="post" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label asp-for="Code" class="form-label">Employee Code</label>
+            <input asp-for="Code" class="form-control" />
+            <span asp-validation-for="Code" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Name</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <hr />
+
+        <h4 class="mb-3">Custom Fields</h4>
+
+        @foreach (var field in fields)
+        {
+            var fieldKey = $"Field_{field.Id}";
+            var fieldError = ViewData.ModelState[fieldKey]?.Errors.FirstOrDefault()?.ErrorMessage;
+
+            <div class="mb-3">
+                <label class="form-label">@field.Name @if (field.IsRequired) {
+                <span class="text-danger">*</span>
+            }
+</label>
+
+            @if ((FieldType)field.Type == FieldType.String)
+            {
+                <input name="@fieldKey" type="text" class="form-control @(fieldError != null ? "is-invalid" : "")" />
+            }
+            else if ((FieldType)field.Type == FieldType.Integer)
+            {
+                <input name="@fieldKey" type="number" class="form-control @(fieldError != null ? "is-invalid" : "")" />
+            }
+            else if ((FieldType)field.Type == FieldType.Date)
+            {
+                <input name="@fieldKey" type="date" class="form-control @(fieldError != null ? "is-invalid" : "")" />
+            }
+            else if ((FieldType)field.Type == FieldType.Dropdown)
+            {
+                var options = field.DropdownOptions?.Split(',') ?? new string[0];
+                <select name="@fieldKey" class="form-select @(fieldError != null ? "is-invalid" : "")">
+                    <option value="">-- Select --</option>
+                    @foreach (var option in options)
+                    {
+                        <option value="@option">@option</option>
+                    }
+                </select>
+            }
+
+            @if (!string.IsNullOrEmpty(fieldError))
+            {
+                <div class="invalid-feedback d-block">@fieldError</div>
+            }
+        </div>
+                }
+
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-save"></i> Save
+        </button>
+    </form>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

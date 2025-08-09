@@ -1,0 +1,51 @@
+﻿@model WhiteLagoon.Domain.Entities.EmployeeField
+
+@{
+    ViewData["Title"] = "Edit Employee Field";
+}
+
+<h2>Edit Employee Field</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Type" class="form-label"></label>
+        <select asp-for="Type" class="form-control" id="Type"
+                asp-items="Html.GetEnumSelectList<FieldType>()"></select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsRequired" class="form-check-input" />
+        <label asp-for="IsRequired" class="form-check-label"></label>
+    </div>
+
+    <div class="mb-3" id="dropdownOptionsDiv">
+        <label asp-for="DropdownOptions" class="form-label"></label>
+        <input asp-for="DropdownOptions" class="form-control" placeholder="Comma separated values" />
+        <span asp-validation-for="DropdownOptions" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleDropdownOptions() {
+            var type = document.getElementById("Type").value;
+            document.getElementById("dropdownOptionsDiv").style.display =
+                (type === "Dropdown") ? "block" : "none";
+        }
+        document.getElementById("Type").addEventListener("change", toggleDropdownOptions);
+        toggleDropdownOptions();
+    </script>
+}
